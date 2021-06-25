@@ -83,10 +83,10 @@ IDY = TR[W:] - growth #implied dividend yield
 # cumulative implied dividend yield, after detrending it becomes heat measure
 cumIDY = np.append(np.array([0]), np.cumsum(IDY))
 
-# statistical analysis of real earnings growth terms
-print('growth of trailing earnings: mean, stdev = ', np.mean(growth), np.std(growth))
+# graphs of ACF and QQ for real earnings growth terms
 plot_acf(growth)
-plt.title('original values of growth')
+plt.show()
+qqplot(growth, line = 's')
 plt.show()
 
 # main regression
