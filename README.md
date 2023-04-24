@@ -1,4 +1,3 @@
-# New Stock Valuation Measure
 Code and data for the article A New Stock Market Valuation Measure with Applications to Equity-Linked Annuities
 
 This article is available on arXiv:1905.04603
