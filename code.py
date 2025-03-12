@@ -71,6 +71,16 @@ CAPE = rindex[W:]/cumearn
 CAPD = rindex[W:]/cumdiv
 print('mean CAPE & CAPD = ', np.mean(CAPE), np.mean(CAPD))
 
+Reg = stats.linregress(CAPE[:-1], TR[W:])
+print('Correlation = ', Reg)
+resid = TR[W:] - Reg.slope * CAPE[:-1] - Reg.intercept * np.ones(N-W)
+print('Normality analysis of residuals: Shapiro-Wilk and Jarque-Bera p = ', stats.shapiro(resid)[1], stats.jarque_bera(resid)[1])
+
+TRearn = rearn*(rwealth[1:]/rindex[1:])
+TRcumearn = [sum(TRearn[k:k+W])/W for k in range(N-W+1)]
+TRCAPE = rwealth[W:]/TRcumearn
+print('correlation between TR-CAPE and classic CAPE = ', stats.pearsonr(TRCAPE, CAPE))
+
 plt.plot(range(1871, 1871 + N), PE, label = 'Price-Earnings')
 plt.plot(range(1871, 1871 + N), PD, label = 'Price-Dividend')
 plt.xlabel('Years')
@@ -106,7 +116,7 @@ print('mean growth of averaged trailing earnings = ', (np.log(cumearn[-1]) - np.
 NFUNDAMENTALS = 4
 fundamentals = [rearn, cumearn, rdiv, cumdiv]
 lags = [1, W, 1, W]
-labels = ['1-Year Earnings', '5-Year Earnings', '1-Year Dividends', '5-Year Dividends']
+labels = ['1Yearnings', '5Yearnings', '1Ydividends', '5Ydividends']
 
 for k in range(NFUNDAMENTALS):
     fund = fundamentals[k]
@@ -142,7 +152,7 @@ for k in range(NFUNDAMENTALS):
     plt.xlabel('Years')
     plt.ylabel('Valuation Measure')
     plt.title('New Standard & Poor 500 Valuation Measure ' + label)
-    plt.savefig(label + ' Valuation.png')
+    plt.savefig(label + '-valuation.png')
     plt.close()
 
     print('Correlation of bubble measure and total returns = ', stats.pearsonr(Bubble[:-1], TR[lag:])[0])
@@ -155,15 +165,15 @@ for k in range(NFUNDAMENTALS):
     aresiduals = abs(residuals)
     qqplot(residuals, line = 's')
     plt.title('quantile-quantile plot of residuals ' + label)
-    plt.savefig(label + ' QQ.png')
+    plt.savefig(label + '-qq.png')
     plt.close()
     plot_acf(residuals, zero = False)
     plt.title('original values of residuals ' + label)
-    plt.savefig(label + ' Original ACF.png')
+    plt.savefig(label + '-res-acf.png')
     plt.close()
     plot_acf(aresiduals, zero = False)
     plt.title('absolute values of residuals ' + label)
-    plt.savefig(label + ' Absolute ACF.png')
+    plt.savefig(label + '-abs-acf.png')
     plt.close()
 
     # p-values for Ljung-Box test of residuals, original and absolute values
@@ -179,7 +189,7 @@ for k in range(NFUNDAMENTALS):
     print('Pearson, original values', stats.pearsonr(residuals, growth))
     print('Spearman, original values', stats.spearmanr(residuals, growth))
     
-    if label == '5-Year Earnings':
+    if label == '5Yearnings':
         plt.plot(range(1870 + lag, 1871 + N), np.log(CAPE) - np.log(CAPE[0])*np.ones(N+1-lag), label = 'Shiller CAPE')
         plt.plot(range(1870 + lag, 1871 + N), Bubble, label = 'New Measure')
         plt.xlabel('Years')
@@ -188,5 +198,3 @@ for k in range(NFUNDAMENTALS):
         plt.legend(bbox_to_anchor=(0, 1), loc='upper left', prop={'size': 12})
         plt.savefig('compare.png')
         plt.close()
-
-    
